@@ -25,7 +25,10 @@ for (const [file, html] of documents) {
   assert.equal(ids(html).length, new Set(ids(html)).size, `${name}: IDs únicos`);
   // JavaScript propio en módulos: en todas las páginas, el que une correo y teléfono
   // del contacto; además, el filtro en la portada y la ficha flotante en los casos.
-  const scripts = [...html.matchAll(/<script\b[^>]*>/gi)].map((match) => match[0]);
+  // El único script externo admitido es el de métricas de Umami, una vez por página.
+  const umami = '<script defer src="https://cloud.umami.is/script.js" data-website-id="06478f4f-6280-4052-8fbd-3644fae8804a" data-domains="zabrinnavargas.github.io"></script>';
+  assert.equal(html.split(umami).length - 1, 1, `${name}: script de Umami`);
+  const scripts = [...html.replace(umami, '').matchAll(/<script\b[^>]*>/gi)].map((match) => match[0]);
   const expected = name === 'index.html' || name.startsWith('proyectos/') ? 2 : 1;
   // Direcciones limpias: los enlaces internos no terminan en .html.
   for (const [, href] of html.matchAll(/<a\b[^>]*\bhref="(\/[^"]*)"/g)) assert(!/\.html(#|$)/.test(href), `${name}: enlace interno sin .html (${href})`);
@@ -104,4 +107,4 @@ assert.equal(visited.size, projectFiles.length, 'Navegación circular por todos 
 const pending = [];
 if (![...documents.values()].some((html) => html.includes('property="og:image"'))) pending.push('sin imagen para compartir (og:image)');
 if (pending.length) console.warn(`PENDIENTE antes de publicar: ${pending.join('; ')} (ver docs/ANTES-DE-PUBLICAR.md).`);
-console.log(`OK: ${pages.length} páginas (con la 404); direcciones sin .html; mapa del sitio y robots.txt; enlaces y recursos; anclas; enlaces externos en pestaña nueva; filtros y áreas; SEO y metadatos para compartir; contenido renderizado; navegación circular; JavaScript solo en el contacto, el filtro de la portada y la ficha de los casos; correo y teléfono ocultos.`);
+console.log(`OK: ${pages.length} páginas (con la 404); direcciones sin .html; mapa del sitio y robots.txt; enlaces y recursos; anclas; enlaces externos en pestaña nueva; filtros y áreas; SEO y metadatos para compartir; contenido renderizado; navegación circular; JavaScript solo en el contacto, el filtro de la portada, la ficha de los casos y las métricas de Umami; correo y teléfono ocultos.`);

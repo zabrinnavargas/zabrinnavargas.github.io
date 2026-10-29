@@ -39,6 +39,8 @@ const imageUrl = image && new URL(image, new URL(import.meta.env.BASE_URL, Astro
     {imageUrl && image === defaultImage && <meta property="og:image:width" content="1200" />}
     {imageUrl && image === defaultImage && <meta property="og:image:height" content="630" />}
     <meta name="twitter:card" content={imageUrl ? 'summary_large_image' : 'summary'} />
+    <!-- Métricas de Umami Cloud (sin cookies); data-domains limita el recuento a la web publicada. -->
+    <script is:inline defer src="https://cloud.umami.is/script.js" data-website-id="06478f4f-6280-4052-8fbd-3644fae8804a" data-domains="zabrinnavargas.github.io"></script>
   </head>
   <body>
     <a class="skip" href="#contenido">Saltar al contenido</a>
